@@ -2,3 +2,12 @@ name: PanelCraft
 version: ${project.version}
 main: net.kunmc.lab.panelcraft.PanelCraft
 api-version: 1.15
+authors: [ YukiAt ]
+
+commands:
+  panelcraft:
+    permission: panelcraft.panel
+
+permissions:
+  panelcraft.panel:
+    default: op
