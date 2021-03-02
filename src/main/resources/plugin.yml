@@ -1,0 +1,4 @@
+name: PanelCraft
+version: ${project.version}
+main: net.kunmc.lab.panelcraft.PanelCraft
+api-version: 1.15
