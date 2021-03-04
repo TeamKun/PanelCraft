@@ -3,6 +3,7 @@ package net.kunmc.lab.panelcraft;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -13,7 +14,7 @@ import java.util.List;
 public class Panel {
     public static final int range = 3;
     public static final long vibrationTime = 3000; // 振動時間（ms）
-    public static final long vibrationPeriod = 500; // 振動周期（ms）
+    public static final long vibrationPeriod = 200; // 振動周期（ms）
 
     private final int x;
     private final int y;
@@ -48,6 +49,8 @@ public class Panel {
         fallingBlocks.forEach(block -> {
             block.setGravity(false);
             block.setDropItem(false);
+            block.setGlowing(true);
+            ((CraftEntity) block).getHandle().noclip = true;
         });
         setBlock(Material.BARRIER);
 
@@ -67,11 +70,7 @@ public class Panel {
                     } else {
                         velocity = new Vector(-0.2, 0, 0);
                     }
-                    fallingBlocks.forEach(block -> {
-                        Location location = block.getLocation();
-                        location.add(velocity);
-                        block.teleport(location);
-                    });
+                    fallingBlocks.forEach(block -> block.setVelocity(velocity));
                 } else {
                     fallingBlocks.forEach(block -> block.setGravity(true));
                     setBlock(Material.AIR);
@@ -81,7 +80,7 @@ public class Panel {
                 }
             }
 
-        }.runTaskTimer(PanelCraft.instance, 0, 1);
+        }.runTaskTimer(PanelCraft.instance, 0, 5);
     }
 
     private void setBlock(Material material) {

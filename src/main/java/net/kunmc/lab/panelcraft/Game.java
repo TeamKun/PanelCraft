@@ -6,7 +6,7 @@ import java.util.LinkedList;
 
 
 public abstract class Game extends BukkitRunnable {
-    public static final int range = 9;
+    public static final int range = 27;
 
     protected LinkedList<Panel> panel;
 
