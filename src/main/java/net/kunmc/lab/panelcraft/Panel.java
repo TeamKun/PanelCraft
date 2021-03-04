@@ -43,15 +43,15 @@ public class Panel {
         for (int i = 0; i < range; i++) {
             for (int j = 0; j < range; j++) {
                 Location location = new Location(Bukkit.getWorld("world"), x + j, y, z + i);
-                fallingBlocks.add(Bukkit.getWorld("world").spawnFallingBlock(location, Material.IRON_BLOCK, (byte) 0x00));
+                FallingBlock block = Bukkit.getWorld("world").spawnFallingBlock(location, Material.RED_WOOL.createBlockData());
+                block.setGravity(false);
+                block.setDropItem(false);
+                block.setGlowing(true);
+                ((CraftEntity) block).getHandle().noclip = true;
+                ((CraftEntity) block).getHandle().ticksLived = 1;
+                fallingBlocks.add(block);
             }
         }
-        fallingBlocks.forEach(block -> {
-            block.setGravity(false);
-            block.setDropItem(false);
-            block.setGlowing(true);
-            ((CraftEntity) block).getHandle().noclip = true;
-        });
         setBlock(Material.BARRIER);
 
         new BukkitRunnable() {
@@ -72,7 +72,10 @@ public class Panel {
                     }
                     fallingBlocks.forEach(block -> block.setVelocity(velocity));
                 } else {
-                    fallingBlocks.forEach(block -> block.setGravity(true));
+                    fallingBlocks.forEach(block -> {
+                        block.setGravity(true);
+                        ((CraftEntity) block).getHandle().noclip = false;
+                    });
                     setBlock(Material.AIR);
                     falling = false;
                     alive = false;
