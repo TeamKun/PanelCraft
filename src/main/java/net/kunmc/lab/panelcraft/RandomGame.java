@@ -28,7 +28,16 @@ public class RandomGame extends Game {
             return;
         }
 
-        int threshold = 5; // 閾値
+        int threshold; // 閾値
+        int total = Game.range * Game.range;
+
+        if (alivePanel.size() < total * 0.7) {
+            threshold = 100;
+        } else if (alivePanel.size() < total * 0.85) {
+            threshold = 20;
+        } else {
+            threshold = 5;
+        }
 
         if (random.nextInt(100) < threshold) {
             int index = random.nextInt(alivePanel.size());

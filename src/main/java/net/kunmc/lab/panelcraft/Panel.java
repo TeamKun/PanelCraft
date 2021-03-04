@@ -3,31 +3,27 @@ package net.kunmc.lab.panelcraft;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
-import org.bukkit.entity.FallingBlock;
+import org.bukkit.World;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Panel {
     public static final int range = 3;
     public static final long vibrationTime = 3000; // 振動時間（ms）
-    public static final long vibrationPeriod = 200; // 振動周期（ms）
+    public static final long vibrationPeriod = 500; // 振動周期（ms）
 
     private final int x;
     private final int y;
     private final int z;
+    private final Material material;
     private boolean alive = true;
     private boolean falling = false;
-    private final List<FallingBlock> fallingBlocks = new ArrayList<>();
 
-    public Panel(int x, int y, int z) {
+    public Panel(int x, int y, int z, Material material) {
         this.x = x;
         this.y = y;
         this.z = z;
-        setBlock(Material.IRON_BLOCK);
+        this.material = material;
+        setBlock(material);
     }
 
     public boolean isAlive() {
@@ -39,20 +35,11 @@ public class Panel {
     }
 
     public void fall() {
-        falling = true;
-        for (int i = 0; i < range; i++) {
-            for (int j = 0; j < range; j++) {
-                Location location = new Location(Bukkit.getWorld("world"), x + j, y, z + i);
-                FallingBlock block = Bukkit.getWorld("world").spawnFallingBlock(location, Material.RED_WOOL.createBlockData());
-                block.setGravity(false);
-                block.setDropItem(false);
-                block.setGlowing(true);
-                ((CraftEntity) block).getHandle().noclip = true;
-                ((CraftEntity) block).getHandle().ticksLived = 1;
-                fallingBlocks.add(block);
-            }
+        if (falling || !alive) {
+            return;
         }
-        setBlock(Material.BARRIER);
+
+        falling = true;
 
         new BukkitRunnable() {
             private final long startTime = System.currentTimeMillis();
@@ -63,19 +50,18 @@ public class Panel {
                 long elapsedTime = System.currentTimeMillis() - startTime;
 
                 if (elapsedTime < vibrationTime) {
-                    Vector velocity;
-
                     if (elapsedTime % vibrationPeriod < vibrationPeriod / 2) {
-                        velocity = new Vector(0.2, 0, 0);
+                        setBlock(Material.RED_WOOL);
                     } else {
-                        velocity = new Vector(-0.2, 0, 0);
+                        setBlock(material);
                     }
-                    fallingBlocks.forEach(block -> block.setVelocity(velocity));
                 } else {
-                    fallingBlocks.forEach(block -> {
-                        block.setGravity(true);
-                        ((CraftEntity) block).getHandle().noclip = false;
-                    });
+                    for (int i = 0; i < range; i++) {
+                        for (int j = 0; j < range; j++) {
+                            World world = Bukkit.getWorld("world");
+                            world.spawnFallingBlock(new Location(world, x + j, y, z + i), material.createBlockData());
+                        }
+                    }
                     setBlock(Material.AIR);
                     falling = false;
                     alive = false;
@@ -83,7 +69,7 @@ public class Panel {
                 }
             }
 
-        }.runTaskTimer(PanelCraft.instance, 0, 5);
+        }.runTaskTimer(PanelCraft.instance, 0, 1);
     }
 
     private void setBlock(Material material) {
