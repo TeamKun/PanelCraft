@@ -5,7 +5,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.LinkedList;
 
-
 public abstract class Game extends BukkitRunnable {
     public static final int range = 27;
 

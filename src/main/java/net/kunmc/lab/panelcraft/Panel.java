@@ -73,6 +73,17 @@ public class Panel {
         }.runTaskTimer(PanelCraft.instance, 0, 1);
     }
 
+    public boolean checkCollision(int x, int y, int z) {
+        if (x < this.x || this.x + range < x) {
+            return false;
+        }
+        if (z < this.z || this.z + range < z) {
+            return false;
+        }
+
+        return y == this.y;
+    }
+
     private void setBlock(Material material) {
         for (int i = 0; i < range; i++) {
             for (int j = 0; j < range; j++) {
