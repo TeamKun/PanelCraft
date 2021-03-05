@@ -74,8 +74,6 @@ public class PanelCommand implements CommandExecutor, TabCompleter {
         }
 
         PanelCraft.game.stop();
-        PanelCraft.game.cancel();
-        PanelCraft.game = null;
 
         return true;
     }

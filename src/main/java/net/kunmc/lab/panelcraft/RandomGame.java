@@ -10,21 +10,19 @@ public class RandomGame extends Game {
     private final Random random;
 
     public RandomGame(int x, int y, int z) {
-        super(x, y, z);
         random = new Random(System.currentTimeMillis());
     }
 
     @Override
     public void run() {
         List<Panel> alivePanel = panel.stream()
+                .parallel()
                 .filter(Panel::isAlive)
                 .filter(panel -> !panel.isFalling())
                 .collect(Collectors.toList());
 
         if (alivePanel.size() == 0) {
-            cancel();
-            Bukkit.broadcastMessage("ゲームが終了しました。");
-            PanelCraft.game = null;
+            stop();
             return;
         }
 

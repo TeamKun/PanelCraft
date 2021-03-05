@@ -7,14 +7,13 @@ import org.bukkit.event.player.PlayerMoveEvent;
 public class StepOnGame extends Game implements Listener {
 
     public StepOnGame(int x, int y, int z) {
-        super(x, y, z);
         PanelCraft.instance.getServer().getPluginManager().registerEvents(this, PanelCraft.instance);
     }
 
     @Override
     public void run() {
         if (panel.stream().noneMatch(panel -> panel.isAlive() && !panel.isFalling())) {
-            cancel();
+            stop();
         }
     }
 
@@ -36,6 +35,7 @@ public class StepOnGame extends Game implements Listener {
         }
 
         panel.stream()
+                .parallel()
                 .filter(Panel::isAlive)
                 .filter(panel -> !panel.isFalling())
                 .filter(panel -> panel.checkCollision(event.getPlayer().getLocation().getBlockX(), event.getPlayer().getLocation().getBlockY() - 1, event.getPlayer().getLocation().getBlockZ()))
