@@ -59,7 +59,7 @@ public class Panel {
                     for (int i = 0; i < range; i++) {
                         for (int j = 0; j < range; j++) {
                             World world = Bukkit.getWorld("world");
-                            world.spawnFallingBlock(new Location(world, x + j, y, z + i), material.createBlockData())
+                            world.spawnFallingBlock(new Location(world, x + j + 0.5, y, z + i + 0.5), material.createBlockData())
                                     .setDropItem(false);
                         }
                     }
