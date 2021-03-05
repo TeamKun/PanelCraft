@@ -1,5 +1,6 @@
 package net.kunmc.lab.panelcraft;
 
+import net.kunmc.lab.panelcraft.commands.CommandMain;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class PanelCraft extends JavaPlugin {
@@ -10,7 +11,7 @@ public final class PanelCraft extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
-        PanelCommand command = new PanelCommand();
+        CommandMain command = new CommandMain();
         getServer().getPluginCommand("panel").setExecutor(command);
         getServer().getPluginCommand("panel").setTabCompleter(command);
     }

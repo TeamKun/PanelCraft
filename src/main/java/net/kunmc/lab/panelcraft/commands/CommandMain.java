@@ -6,10 +6,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CommandMain implements CommandExecutor, TabCompleter {
@@ -17,7 +14,9 @@ public class CommandMain implements CommandExecutor, TabCompleter {
     private final List<CommandBase> commands = new ArrayList<>();
 
     public CommandMain() {
+        commands.add(new CommandSetup());
         commands.add(new CommandStart());
+        commands.add(new CommandStop());
     }
 
     @Override
@@ -49,12 +48,12 @@ public class CommandMain implements CommandExecutor, TabCompleter {
         List<String> result;
 
         if (!sender.hasPermission("panelcraft.command")) {
-            return null;
+            return Collections.emptyList();
         }
 
         switch (args.length) {
             case 0:
-                return null;
+                return Collections.emptyList();
             case 1:
                 result = new ArrayList<>();
                 commands.forEach(c -> result.add(c.getName()));
@@ -67,7 +66,7 @@ public class CommandMain implements CommandExecutor, TabCompleter {
                             .findAny();
 
                     if (!selectCommand.isPresent()) {
-                        return null;
+                        return Collections.emptyList();
                     }
 
                     result = selectCommand.get().onTabComplete(Arrays.copyOfRange(args, 1, args.length));

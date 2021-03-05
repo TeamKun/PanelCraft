@@ -61,10 +61,6 @@
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
-        <repository>
-            <id>tunnel</id>
-            <url>https://repo.mikeprimm.com/</url>
-        </repository>
     </repositories>
 
     <dependencies>

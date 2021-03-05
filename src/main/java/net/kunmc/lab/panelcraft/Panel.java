@@ -74,10 +74,10 @@ public class Panel {
     }
 
     public boolean checkCollision(int x, int y, int z) {
-        if (x < this.x || this.x + range < x) {
+        if (x < this.x || this.x + range - 1 < x) {
             return false;
         }
-        if (z < this.z || this.z + range < z) {
+        if (z < this.z || this.z + range - 1 < z) {
             return false;
         }
 

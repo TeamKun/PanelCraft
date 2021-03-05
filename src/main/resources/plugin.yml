@@ -6,8 +6,8 @@ authors: [ YukiAt ]
 
 commands:
   panel:
-    permission: panelcraft.panel
+    permission: panelcraft.command
 
 permissions:
-  panelcraft.panel:
+  panelcraft.command:
     default: op
