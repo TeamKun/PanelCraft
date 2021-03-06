@@ -1,5 +1,6 @@
 package net.kunmc.lab.panelcraft;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,12 +13,16 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 public class Game {
-    private final int range;
+    public static final int defaultRange = 27;
+
     private final List<Panel> panel = new LinkedList<>();
     private BukkitRunnable game;
 
-    public Game(int x, int y, int z, int range) {
-        this.range = range;
+    public Game(Location location, int range, int panelX, int panelZ, int marginX, int marginZ) {
+        this(location.getBlockX(), location.getBlockY(), location.getBlockZ(), range, panelX, panelZ, marginX, marginZ);
+    }
+
+    public Game(int x, int y, int z, int range, int panelX, int panelZ, int marginX, int marginZ) {
         for (int i = 0; i < range; i++) {
             for (int j = 0; j < range; j++) {
                 Material material;
@@ -27,7 +32,13 @@ public class Game {
                 } else {
                     material = Material.BLACK_WOOL;
                 }
-                panel.add(new Panel(x + j * Panel.range - Panel.range * range / 2, y - 1, z + i * Panel.range - Panel.range * range / 2, material));
+                panel.add(new Panel(
+                        x + (panelX + marginX) * (j - range / 2),
+                        y - 1,
+                        z + (panelZ + marginZ) * (i - range / 2),
+                        panelX,
+                        panelZ,
+                        material));
             }
         }
     }
@@ -49,6 +60,13 @@ public class Game {
 
     public void stop() {
         panel.forEach(Panel::fall);
+        if (game != null) {
+            game.cancel();
+        }
+    }
+
+    public void erase() {
+        panel.forEach(Panel::erase);
         if (game != null) {
             game.cancel();
         }

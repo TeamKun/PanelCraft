@@ -19,6 +19,7 @@ public class CommandStart implements CommandBase {
     @Override
     public boolean onCommand(CommandSender sender, String[] args) {
         if (args.length != 1) {
+            sender.sendMessage(ChatColor.RED + "コマンドの引数が間違ってます。");
             return true;
         }
 

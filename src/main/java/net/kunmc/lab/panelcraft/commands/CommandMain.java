@@ -14,6 +14,7 @@ public class CommandMain implements CommandExecutor, TabCompleter {
     private final List<CommandBase> commands = new ArrayList<>();
 
     public CommandMain() {
+        commands.add(new CommandErase());
         commands.add(new CommandSetup());
         commands.add(new CommandStart());
         commands.add(new CommandStop());
@@ -26,7 +27,7 @@ public class CommandMain implements CommandExecutor, TabCompleter {
         }
 
         if (args.length == 0) {
-            sender.sendMessage(ChatColor.RED + "コマンドの引数が足りないよ～ん");
+            sender.sendMessage(ChatColor.RED + "コマンドの引数が足りないようです...");
             return true;
         }
 
@@ -36,7 +37,7 @@ public class CommandMain implements CommandExecutor, TabCompleter {
                 .findAny();
 
         if (!selectCommand.isPresent()) {
-            sender.sendMessage(ChatColor.RED + "コマンドが存在しないようです...");
+            sender.sendMessage(ChatColor.RED + "そのようなコマンドは存在しません。");
             return true;
         }
 

@@ -7,21 +7,25 @@ import org.bukkit.World;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class Panel {
-    public static final int range = 3;
+    public static final int defaultWidth = 3;
     public static final long vibrationTime = 3000; // 振動時間（ms）
     public static final long vibrationPeriod = 500; // 振動周期（ms）
 
     private final int x;
     private final int y;
     private final int z;
+    private final int widthX;
+    private final int widthZ;
     private final Material material;
     private boolean alive = true;
     private boolean falling = false;
 
-    public Panel(int x, int y, int z, Material material) {
+    public Panel(int x, int y, int z, int widthX, int widthZ, Material material) {
         this.x = x;
         this.y = y;
         this.z = z;
+        this.widthX = widthX;
+        this.widthZ = widthZ;
         this.material = material;
         setBlock(material);
     }
@@ -56,8 +60,8 @@ public class Panel {
                         setBlock(material);
                     }
                 } else {
-                    for (int i = 0; i < range; i++) {
-                        for (int j = 0; j < range; j++) {
+                    for (int i = 0; i < widthZ; i++) {
+                        for (int j = 0; j < widthX; j++) {
                             World world = Bukkit.getWorld("world");
                             world.spawnFallingBlock(new Location(world, x + j + 0.5, y, z + i + 0.5), material.createBlockData())
                                     .setDropItem(false);
@@ -73,11 +77,17 @@ public class Panel {
         }.runTaskTimer(PanelCraft.instance, 0, 1);
     }
 
+    public void erase() {
+        setBlock(Material.AIR);
+        falling = false;
+        alive = false;
+    }
+
     public boolean checkCollision(int x, int y, int z) {
-        if (x < this.x || this.x + range - 1 < x) {
+        if (x < this.x || this.x + widthX - 1 < x) {
             return false;
         }
-        if (z < this.z || this.z + range - 1 < z) {
+        if (z < this.z || this.z + widthZ - 1 < z) {
             return false;
         }
 
@@ -85,8 +95,8 @@ public class Panel {
     }
 
     private void setBlock(Material material) {
-        for (int i = 0; i < range; i++) {
-            for (int j = 0; j < range; j++) {
+        for (int i = 0; i < widthZ; i++) {
+            for (int j = 0; j < widthX; j++) {
                 Location location = new Location(Bukkit.getWorld("world"), x + j, y, z + i);
                 location.getBlock().setType(material);
             }
