@@ -43,16 +43,6 @@ public class CommandSetup implements CommandBase {
         int marginX = 0;
         int marginZ = 0;
         switch (args.length) {
-            case 0:
-                break;
-            case 1:
-                try {
-                    range = Integer.parseInt(args[0]);
-                } catch (NumberFormatException e) {
-                    sender.sendMessage(ChatColor.RED + "引数の形式が間違っているようです。");
-                    return true;
-                }
-                break;
             case 3:
                 try {
                     String[] arg1 = args[1].split(":");
@@ -82,7 +72,16 @@ public class CommandSetup implements CommandBase {
                     sender.sendMessage(ChatColor.RED + "引数の形式が間違っているようです。");
                     return true;
                 }
+            case 1:
+                try {
+                    range = Integer.parseInt(args[0]);
+                } catch (NumberFormatException e) {
+                    sender.sendMessage(ChatColor.RED + "引数の形式が間違っているようです。");
+                    return true;
+                }
+            case 0:
                 break;
+
             default:
                 sender.sendMessage(ChatColor.RED + "コマンドの引数が間違ってます。");
                 return true;

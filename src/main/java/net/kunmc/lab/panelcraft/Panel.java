@@ -1,9 +1,6 @@
 package net.kunmc.lab.panelcraft;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class Panel {
@@ -60,13 +57,21 @@ public class Panel {
                         setBlock(material);
                     }
                 } else {
+                    World world = Bukkit.getWorld("world");
+
+                    if (world == null) {
+                        System.err.println("[ERROR]: ワールドが取得できません！");
+                        return;
+                    }
+
                     for (int i = 0; i < widthZ; i++) {
                         for (int j = 0; j < widthX; j++) {
-                            World world = Bukkit.getWorld("world");
                             world.spawnFallingBlock(new Location(world, x + j + 0.5, y, z + i + 0.5), material.createBlockData())
                                     .setDropItem(false);
                         }
                     }
+                    world.playSound(new Location(world, x + (widthX * 0.5), y, z + (widthZ * 0.5)),
+                            Sound.BLOCK_WOOL_FALL, 1.0f, 1.0f);
                     setBlock(Material.AIR);
                     falling = false;
                     alive = false;
