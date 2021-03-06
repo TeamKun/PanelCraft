@@ -23,7 +23,7 @@ public class CommandStop implements CommandBase {
         }
 
         if (PanelCraft.game.isFinished()) {
-            sender.sendMessage("既に終了しているようです...");
+            sender.sendMessage(ChatColor.RED + "既に終了しているようです...");
             return true;
         }
 

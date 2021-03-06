@@ -1,6 +1,7 @@
 package net.kunmc.lab.panelcraft.commands;
 
 import net.kunmc.lab.panelcraft.PanelCraft;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -17,7 +18,7 @@ public class CommandErase implements CommandBase {
     @Override
     public boolean onCommand(CommandSender sender, String[] args) {
         if (PanelCraft.game == null) {
-            sender.sendMessage(ChatColor.RED + "まだゲームが始まっていないようです...");
+            sender.sendMessage(ChatColor.RED + "まだゲームが開始されていません。");
             return true;
         }
 
@@ -27,6 +28,8 @@ public class CommandErase implements CommandBase {
         }
 
         PanelCraft.game.erase();
+        PanelCraft.game = null;
+        Bukkit.broadcastMessage(ChatColor.GREEN + "パネルが抹消されました。");
 
         return true;
     }
