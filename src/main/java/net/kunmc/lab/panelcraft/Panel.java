@@ -5,8 +5,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class Panel {
     public static final int defaultWidth = 3;
-    public static final long vibrationTime = 3000; // 振動時間（ms）
-    public static final long vibrationPeriod = 500; // 振動周期（ms）
+    public static final long blinkTime = 3000; // 振動時間（ms）
+    public static final long blinkPeriod = 500; // 振動周期（ms）
 
     private final int x;
     private final int y;
@@ -16,6 +16,7 @@ public class Panel {
     private final Material material;
     private boolean alive = true;
     private boolean falling = false;
+    private Material currentMaterial;
 
     public Panel(int x, int y, int z, int widthX, int widthZ, Material material) {
         this.x = x;
@@ -50,20 +51,24 @@ public class Panel {
                 // 経過時間（ms）
                 long elapsedTime = System.currentTimeMillis() - startTime;
 
-                if (elapsedTime < vibrationTime) {
-                    if (elapsedTime % vibrationPeriod < vibrationPeriod / 2) {
-                        setBlock(Material.RED_WOOL);
+                World world = Bukkit.getWorld("world");
+
+                if (world == null) {
+                    System.err.println("[ERROR]: ワールドが取得できません！");
+                    return;
+                }
+
+                if (elapsedTime < blinkTime) {
+                    if (elapsedTime % blinkPeriod < blinkPeriod / 2) {
+                        if (currentMaterial != Material.RED_WOOL) {
+                            setBlock(Material.RED_WOOL);
+                        }
                     } else {
-                        setBlock(material);
+                        if (currentMaterial != material) {
+                            setBlock(material);
+                        }
                     }
                 } else {
-                    World world = Bukkit.getWorld("world");
-
-                    if (world == null) {
-                        System.err.println("[ERROR]: ワールドが取得できません！");
-                        return;
-                    }
-
                     for (int i = 0; i < widthZ; i++) {
                         for (int j = 0; j < widthX; j++) {
                             world.spawnFallingBlock(new Location(world, x + j + 0.5, y, z + i + 0.5), material.createBlockData())
@@ -71,7 +76,7 @@ public class Panel {
                         }
                     }
                     world.playSound(new Location(world, x + (widthX * 0.5), y, z + (widthZ * 0.5)),
-                            Sound.BLOCK_WOOL_FALL, 1.0f, 1.0f);
+                            Sound.BLOCK_BAMBOO_BREAK, 1.0f, 1.0f);
                     setBlock(Material.AIR);
                     falling = false;
                     alive = false;
@@ -100,6 +105,7 @@ public class Panel {
     }
 
     private void setBlock(Material material) {
+        currentMaterial = material;
         for (int i = 0; i < widthZ; i++) {
             for (int j = 0; j < widthX; j++) {
                 Location location = new Location(Bukkit.getWorld("world"), x + j, y, z + i);
