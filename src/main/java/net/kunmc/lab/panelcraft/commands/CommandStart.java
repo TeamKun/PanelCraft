@@ -18,7 +18,7 @@ public class CommandStart implements CommandBase {
 
     @Override
     public boolean onCommand(CommandSender sender, String[] args) {
-        if (args.length != 1) {
+        if (args.length == 0) {
             sender.sendMessage(ChatColor.RED + "コマンドの引数が間違ってます。");
             return true;
         }
@@ -35,10 +35,22 @@ public class CommandStart implements CommandBase {
 
         switch (args[0]) {
             case "random":
-                PanelCraft.game.run(Game.GameMode.Random);
+                PanelCraft.game.run(PanelCraft.game.new RandomGame());
                 break;
             case "stepon":
-                PanelCraft.game.run(Game.GameMode.StepOn);
+                PanelCraft.game.run(PanelCraft.game.new StepOnGame());
+                break;
+            case "switch":
+                if (args.length == 1) {
+                    PanelCraft.game.run(PanelCraft.game.new SwitchGame(1000));
+                } else {
+                    try {
+                        PanelCraft.game.run(PanelCraft.game.new SwitchGame(Integer.parseInt(args[1])));
+                    } catch (NumberFormatException e) {
+                        sender.sendMessage(ChatColor.RED + "引数の形式が間違っているようです。");
+                        return true;
+                    }
+                }
                 break;
             default:
                 sender.sendMessage(ChatColor.RED + "そのようなゲームモードは存在しません。");
@@ -52,7 +64,9 @@ public class CommandStart implements CommandBase {
     public List<String> onTabComplete(String[] args) {
         switch (args.length) {
             case 1:
-                return Arrays.asList("random", "stepon");
+                return Arrays.asList("random", "stepon", "switch");
+            case 2:
+                return args[0].equalsIgnoreCase("switch") ? Collections.singletonList("<period>") : Collections.emptyList();
             default:
                 return Collections.emptyList();
         }

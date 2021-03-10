@@ -93,6 +93,10 @@ public class Panel {
         alive = false;
     }
 
+    public boolean checkCollision(Location location) {
+        return checkCollision(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+    }
+
     public boolean checkCollision(int x, int y, int z) {
         if (x < this.x || this.x + widthX - 1 < x) {
             return false;
@@ -102,6 +106,18 @@ public class Panel {
         }
 
         return y == this.y;
+    }
+
+    public void switchMaterial() {
+        if (!isAlive() || isFalling()) {
+            return;
+        }
+
+        if (currentMaterial == material) {
+            setBlock(Material.AIR);
+        } else if (currentMaterial == Material.AIR) {
+            setBlock(material);
+        }
     }
 
     private void setBlock(Material material) {

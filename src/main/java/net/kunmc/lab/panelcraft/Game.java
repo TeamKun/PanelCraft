@@ -1,7 +1,9 @@
 package net.kunmc.lab.panelcraft;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -43,18 +45,8 @@ public class Game {
         }
     }
 
-    public void run(GameMode mode) {
-        switch (mode) {
-            case Random:
-                game = new RandomGame();
-                break;
-            case StepOn:
-                game = new StepOnGame();
-                break;
-            default:
-                return;
-        }
-
+    public void run(BukkitRunnable game) {
+        this.game = game;
         game.runTaskTimer(PanelCraft.instance, 0, 1);
     }
 
@@ -80,12 +72,7 @@ public class Game {
         return game != null && game.isCancelled();
     }
 
-    public enum GameMode {
-        Random,
-        StepOn,
-    }
-
-    private class RandomGame extends BukkitRunnable {
+    public class RandomGame extends BukkitRunnable {
         private final Random random = new Random(System.currentTimeMillis());
 
         @Override
@@ -112,7 +99,7 @@ public class Game {
         }
     }
 
-    private class StepOnGame extends BukkitRunnable implements Listener {
+    public class StepOnGame extends BukkitRunnable implements Listener {
 
         public StepOnGame() {
             PanelCraft.instance.getServer().getPluginManager().registerEvents(this, PanelCraft.instance);
@@ -141,8 +128,30 @@ public class Game {
                     .parallel()
                     .filter(Panel::isAlive)
                     .filter(panel -> !panel.isFalling())
-                    .filter(panel -> panel.checkCollision(event.getPlayer().getLocation().getBlockX(), event.getPlayer().getLocation().getBlockY() - 1, event.getPlayer().getLocation().getBlockZ()))
+                    .filter(panel -> panel.checkCollision(event.getPlayer().getLocation().add(0.0, -1.0, 0.0)))
                     .forEach(Panel::fall);
+        }
+    }
+
+    public class SwitchGame extends BukkitRunnable {
+        private final long period;
+        private long prevTime = System.currentTimeMillis();
+
+        public SwitchGame(long period) {
+            this.period = period;
+        }
+
+        @Override
+        public void run() {
+            long elapsedTime = System.currentTimeMillis() - prevTime;
+
+            if (elapsedTime > period) {
+                Bukkit.getOnlinePlayers().stream().parallel()
+                        .forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_COW_BELL, 1.0f, 1.0f));
+                panel.stream().parallel()
+                        .forEach(Panel::switchMaterial);
+                prevTime = System.currentTimeMillis();
+            }
         }
     }
 
