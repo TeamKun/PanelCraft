@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 public class Game {
     public static final int defaultRange = 27;
+    private final int range;
 
     private final List<Panel> panel = new LinkedList<>();
     private BukkitRunnable game;
@@ -25,6 +26,8 @@ public class Game {
     }
 
     public Game(int x, int y, int z, int range, int panelX, int panelZ, int marginX, int marginZ) {
+        this.range = range;
+
         for (int i = 0; i < range; i++) {
             for (int j = 0; j < range; j++) {
                 Material material;
@@ -139,6 +142,11 @@ public class Game {
 
         public SwitchGame(long period) {
             this.period = period;
+            for (int i = 0; i < range * range; i++) {
+                if ((i / range % 2 + i % range) % 2 == 0) {
+                    panel.get(i).switchMaterial();
+                }
+            }
         }
 
         @Override
@@ -148,8 +156,7 @@ public class Game {
             if (elapsedTime > period) {
                 Bukkit.getOnlinePlayers().stream().parallel()
                         .forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_COW_BELL, 1.0f, 1.0f));
-                panel.stream().parallel()
-                        .forEach(Panel::switchMaterial);
+                panel.forEach(Panel::switchMaterial);
                 prevTime = System.currentTimeMillis();
             }
         }
